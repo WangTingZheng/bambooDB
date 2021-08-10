@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <assert.h>
 #include "set.h"
 
 /*
@@ -37,12 +38,13 @@ set_init_kv(){
 KVArray*
 set_init_kvarray(int num){
 	KVArray *kva = (KVArray *)malloc(sizeof(KVArray));
-	kva->kv = (KV *)malloc(sizeof(KV) * num);
+	kva->kv = (KV **)malloc(sizeof(KV*) * num);
 	kva->num = num;
 	
 	for(int i=0;i<num; i++){
-		kva->kv[i].key   = 0;
-		kva->kv[i].value = NULL;
+		kva->kv[i] = (KV*)malloc(sizeof(KV));
+		kva->kv[i]->key   = 0;
+		kva->kv[i]->value = NULL;
 	}
 	
 	return kva;
@@ -115,11 +117,33 @@ set_generate_array(Seed seed, int num){
 	KVArray* kva = set_init_kvarray(num);
 		
 	for(int i=0; i<num; i++){
-		kva->kv[i] = *set_generate_kv(i * seed);
+		kva->kv[i] = set_generate_kv(i * seed);
 	}
 
 	kva->num = num;
 	return kva;
+}
+
+void 
+set_free_kv(KV **kv, int num){
+	assert(num >=0);
+
+	for(int i=0; i<num; i++){
+		if(kv[i] != NULL){
+			if(kv[i]->value != NULL)
+				free(kv[i]->value);
+			free(&kv[i]);
+		}
+	}
+	
+	free(kv);
+}
+
+
+void
+set_free_array(KVArray *kva){
+	set_free_kv(kva->kv, kva->num);
+	free(kva);
 }
 
 long double
@@ -167,7 +191,7 @@ set_array_size(KVArray* kva){
 	dataSize->BValue = 0;
 	
 	for(int i=0; i<kva->num; i++){
-		dataSize->BValue += sizeof(char) * (strlen((kva->kv->value)) + 1) + sizeof(kva->kv->key);
+		dataSize->BValue += sizeof(char) * (strlen((kva->kv[i]->value)) + 1) + sizeof(kva->kv[i]->key);
 	}
 	
 	return dataSize;

@@ -14,7 +14,7 @@ typedef struct{
 }KV;
 
 typedef struct{
-	KV *kv;
+	KV **kv;
 	int num;
 }KVArray;
 
@@ -49,6 +49,10 @@ Key       set_generate_key(Seed seed);
 Value     set_generate_value(Seed seed);
 KV*       set_generate_kv(Seed seed);
 KVArray*  set_generate_array(Seed seed, int num);
+
+void      set_free_kv(KV *	*kv, int num);
+void      set_free_array(KVArray *kva);
+
 DataUnit* set_calculate_dataUnit(long double size);
 void      set_calculate_dataSize(DataSize *dataSize);
 void      set_calculate_dataSpeed(long long size, DataSpeed *dataSpeed);

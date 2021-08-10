@@ -1,5 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+#include <stdbool.h>
+
 #include "index.h"
 
 char **array;
@@ -12,15 +16,32 @@ idx_init(){
 	}
 }
 
-void   
-idx_insert(Key key, Value value){
-	int len = strlen(value) + 1;
+
+bool
+idx_isExist(Key key){
+	return key >= 0 && key < ARRAY_LENGTH && array[key] != NULL;
+}
+
+void 
+idx_add(Key key, Value value){
+	assert(key >= 0 && key < ARRAY_LENGTH);
+	assert(value != NULL);
+	int len = strlen(value);
+	
+	assert(value[len] == '\0');
+	
 	if(array[key]){
 		free(array[key]);
 		array[key] = NULL;
 	}
 	array[key] = (char *)malloc(sizeof(char) * (len + 1));
 	memcpy(array[key], value, len + 1);
+}
+
+void   
+idx_insert(Key key, Value value){
+	if(!idx_isExist(key))
+		idx_add(key, value);
 }
 
 void
@@ -31,7 +52,8 @@ idx_delete(Key key){
 
 void   
 idx_update(Key key, Value value){
-	idx_insert(key, value);
+	if(idx_isExist(key))
+		idx_add(key, value);
 }
 
 Value  
@@ -39,21 +61,22 @@ idx_search(Key key){
 	return array[key];
 }
 
+
 KVArray
 idx_iterat(){
 	int num = 0;
 	int len =0;
 	KVArray kva;
 	
-	kva.kv = (KV *)malloc(sizeof(KV) * ARRAY_LENGTH);
+	kva.kv = (KV **)malloc(sizeof(KV) * ARRAY_LENGTH);
 	
 	for(int i=0; i< ARRAY_LENGTH; i++){
 		if(array[i] != NULL){
 			num ++;
 			len = strlen(array[i]);
-			kva.kv[i].key = i;
-			kva.kv[i].value = (Value)malloc(sizeof(char) * len);
-			memcpy(kva.kv[i].value, array[i], len + 1);
+			kva.kv[i]->key = i;
+			kva.kv[i]->value = (Value)malloc(sizeof(char) * len);
+			memcpy(kva.kv[i]->value, array[i], len + 1);
 		}
 	}
 	
@@ -64,7 +87,10 @@ idx_iterat(){
 void   
 idx_free(){
 	for(int i=0; i< ARRAY_LENGTH; i++){
-		free(array[i]);
+		if(array[i]){
+			free(array[i]);
+			array[i] = NULL;
+		}
 	}
 	
 	free(array);

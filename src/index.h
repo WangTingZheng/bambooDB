@@ -8,6 +8,7 @@
 
 
 void    idx_init();
+bool    idx_isExist(Key key);
 void    idx_insert(Key key, Value value);
 void    idx_delete(Key key);
 void    idx_update(Key key, Value value);

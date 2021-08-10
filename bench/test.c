@@ -10,14 +10,17 @@ main(){
 	clean_kvarray(kva_insert);
 	
 	for(int i=0; i<kva_update->num;i++){
-		kva_update->kv[i].key = kva_insert->kv[i].key;
+		kva_update->kv[i]->key = kva_insert->kv[i]->key;
 	}
+	KVArray *kva_insert_res = set_init_kvarray(kva_insert->num);
+	KVArray *kva_update_res = set_init_kvarray(kva_insert->num);
+	KVArray *kva_delete_res = set_init_kvarray(kva_insert->num);
 	
-	DataSet *insert = bench_insert_search(kva_insert);
-	DataSet *update = bench_update_search(kva_update);
-	DataSet *delete = bench_delete_search(kva_update);
+	DataSet *insert_dataSet = bench_insert_search(kva_insert, kva_insert_res);
+	DataSet *update_dataSet = bench_update_search(kva_update, kva_insert_res);
+	DataSet *delete_dataSet = bench_delete_search(kva_update, kva_insert_res);
 	
-	set_print_dataset("insert", insert);
-	set_print_dataset("update", update);
-	set_print_dataset("delete", delete);
+	set_print_dataset("insert", insert_dataSet);
+	set_print_dataset("update", update_dataSet);
+	set_print_dataset("delete", delete_dataSet);
 }

@@ -34,9 +34,10 @@ bench_return(DataSet *dataSet, KVArray *kva){
 }
 
 DataSet* 
-bench_insert_search(KVArray *kva){
+bench_insert_search(KVArray *kva, KVArray *kva_insert_res){
 	DataSet *dataSet = bench_prepare();
-	if(!test_insert_search(kva)){
+	
+	if(!test_insert_search(kva, kva_insert_res)){
 		printf("test do not passed\n");
 		return NULL;
 	}
@@ -45,9 +46,10 @@ bench_insert_search(KVArray *kva){
 
 
 DataSet* 
-bench_update_search(KVArray *kva){
+bench_update_search(KVArray *kva, KVArray *kva_update_res){
 	DataSet *dataSet = bench_prepare();
-	if(!test_update_search(kva)){
+	
+	if(!test_update_search(kva, kva_update_res)){
 		printf("test do not passed\n");
 		return NULL;
 	}
@@ -56,9 +58,10 @@ bench_update_search(KVArray *kva){
 
 
 DataSet* 
-bench_delete_search(KVArray *kva){
+bench_delete_search(KVArray *kva, KVArray *kva_delete_res){
 	DataSet *dataSet = bench_prepare();
-	if(!test_delete_search(kva)){
+
+	if(!test_delete_search(kva, kva_delete_res)){
 		printf("test do not passed\n");
 		return NULL;
 	}
